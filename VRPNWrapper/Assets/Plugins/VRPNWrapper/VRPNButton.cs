@@ -81,7 +81,7 @@ public class VRPNButton : MonoBehaviour {
 
 
     // VRPN Button Report Structure    
-    [ StructLayout( LayoutKind.Sequential, Pack=1 )]
+    [ StructLayout( LayoutKind.Sequential, Pack=0 )]
 	public struct ButtonReport
 	{
     	public VRPNManager.TimeVal msg_time;
@@ -91,10 +91,12 @@ public class VRPNButton : MonoBehaviour {
 
     // Class Properties
 	public static int num_buttons = 0;
-    
+
     // Public Properties
-    public VRPNManager.Button_Types ButtonType = VRPNManager.Button_Types.vrpn_XInputGamepad;
-    public VRPNDeviceConfig.Device_Names ButtonName = VRPNDeviceConfig.Device_Names.XInput0;
+    public VRPNManager.Button_Types ButtonType = VRPNManager.Button_Types.vrpn_Mouse;
+    public VRPNDeviceConfig.Device_Names ButtonName = VRPNDeviceConfig.Device_Names.Mouse0;
+    //public VRPNManager.Button_Types ButtonType = VRPNManager.Button_Types.vrpn_XInputGamepad;
+    //public VRPNDeviceConfig.Device_Names ButtonName = VRPNDeviceConfig.Device_Names.XInput0;
     public int ButtonNumber = -1;
     public int MaxReports = 20;
     public bool purgeReports = true;
@@ -109,16 +111,16 @@ public class VRPNButton : MonoBehaviour {
 	private int debug_xoffset;
         
     // VRPNWrapper Function Imports
-    [DllImport ("VRPNWrapper/VRPNWrapper")]
+    [DllImport ("VRPNWrapper")]
     private static extern void VRPNButtonStart(string name);
         
-    [DllImport ("VRPNWrapper/VRPNWrapper")]
+    [DllImport ("VRPNWrapper")]
     private static extern void VRPNButtonReport(string name, [In,Out] IntPtr rep, [Out] IntPtr ts, int button);
     
-    [DllImport ("VRPNWrapper/VRPNWrapper")]
+    [DllImport ("VRPNWrapper")]
     private static extern int VRPNButtonNumReports(string name);
 
-    [DllImport ("VRPNWrapper/VRPNWrapper")]
+    [DllImport ("VRPNWrapper")]
     private static extern void VRPNButtonReports(string name, [In,Out] IntPtr[] reportsPtr, [In,Out] ref int cnt, [In, MarshalAs(UnmanagedType.LPStruct)] VRPNManager.TimeVal ts, int btn_num, bool clearReport);
   
     

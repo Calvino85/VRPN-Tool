@@ -207,8 +207,8 @@ public class VRPNTrackerCalibrate : MonoBehaviour {
     		{
     			savedApply = tracker.ApplyTracking;
     			savedDebug = tracker.ShowDebug;
-    			if (tracker.TrackerType == VRPNManager.Tracker_Types.vrpn_Tracker_MotionNode)
-    				tracker.ApplyTracking = VRPNTracker.Transform_Type.None;
+    			//if (tracker.TrackerType == VRPNManager.Tracker_Types.vrpn_Tracker_MotionNode)
+    			//	tracker.ApplyTracking = VRPNTracker.Transform_Type.None;
     			trackerPosition = tracker.GetPosition();
     			trackerRotation = tracker.GetRotation();
     			tracker.ShowDebug = true;
@@ -235,43 +235,43 @@ public class VRPNTrackerCalibrate : MonoBehaviour {
     		}
     		else if (state == Action_Type.Rotate)
     		{
-    			if (tracker.TrackerType == VRPNManager.Tracker_Types.vrpn_Tracker_MotionNode)
-    			{
-    				tracker.SensorOffset.localRotation = Quaternion.Inverse(trackerRotation)*tracker.GetRotation();
-    				tracker.SensorOffset.localRotation *= sensorRotation;
-    			}
-    			else
-    			{
-    				Vector3 right = tracker.SensorOffset.localRotation * Vector3.right;
-    				Vector3 up = tracker.SensorOffset.localRotation * Vector3.up;
-    				Quaternion mouseXRotation = Quaternion.AngleAxis(-gain*0.01f*Input.GetAxis("Mouse X"),up);
-    				Quaternion mouseYRotation = Quaternion.AngleAxis(-gain*0.01f*Input.GetAxis("Mouse Y"),right);
-    				tracker.SensorOffset.localRotation *= mouseXRotation * mouseYRotation;
-    			}
+    			//if (tracker.TrackerType == VRPNManager.Tracker_Types.vrpn_Tracker_MotionNode)
+    			//{
+    			//	tracker.SensorOffset.localRotation = Quaternion.Inverse(trackerRotation)*tracker.GetRotation();
+    			//	tracker.SensorOffset.localRotation *= sensorRotation;
+    			//}
+    			//else
+    			//{
+    			//	Vector3 right = tracker.SensorOffset.localRotation * Vector3.right;
+    			//	Vector3 up = tracker.SensorOffset.localRotation * Vector3.up;
+    			//	Quaternion mouseXRotation = Quaternion.AngleAxis(-gain*0.01f*Input.GetAxis("Mouse X"),up);
+    			//	Quaternion mouseYRotation = Quaternion.AngleAxis(-gain*0.01f*Input.GetAxis("Mouse Y"),right);
+    			//	tracker.SensorOffset.localRotation *= mouseXRotation * mouseYRotation;
+    			//}
     		}
     		else if (state == Action_Type.XYAxis)
     		{
-    			if (tracker.TrackerType == VRPNManager.Tracker_Types.vrpn_Tracker_MotionNode)
-    			{
-    				Vector3 pos = tracker.SensorOffset.localPosition;
-    				pos.x += gain*0.01f*Input.GetAxis("Mouse X");
-    				pos.y += gain*0.01f*Input.GetAxis("Mouse Y");
-    				tracker.SensorOffset.localPosition = pos;
-    			}
-    			else
-    				tracker.SensorOffset.localPosition = tracker.GetPosition() - trackerPosition;
+    			//if (tracker.TrackerType == VRPNManager.Tracker_Types.vrpn_Tracker_MotionNode)
+    			//{
+    			//	Vector3 pos = tracker.SensorOffset.localPosition;
+    			//	pos.x += gain*0.01f*Input.GetAxis("Mouse X");
+    			//	pos.y += gain*0.01f*Input.GetAxis("Mouse Y");
+    			//	tracker.SensorOffset.localPosition = pos;
+    			//}
+    			//else
+    			//	tracker.SensorOffset.localPosition = tracker.GetPosition() - trackerPosition;
     		}
     		else if (state == Action_Type.XZAxis)
     		{
-    			if (tracker.TrackerType == VRPNManager.Tracker_Types.vrpn_Tracker_MotionNode)
-    			{
-    				Vector3 pos = tracker.SensorOffset.localPosition;
-    				pos.x += gain*0.01f*Input.GetAxis("Mouse X");
-    				pos.z += gain*0.01f*Input.GetAxis("Mouse Y");
-    				tracker.SensorOffset.localPosition = pos;
-    			}
-    			else
-    				tracker.SensorOffset.localPosition = tracker.GetPosition() - trackerPosition;
+    			//if (tracker.TrackerType == VRPNManager.Tracker_Types.vrpn_Tracker_MotionNode)
+    			//{
+    			//	Vector3 pos = tracker.SensorOffset.localPosition;
+    			//	pos.x += gain*0.01f*Input.GetAxis("Mouse X");
+    			//	pos.z += gain*0.01f*Input.GetAxis("Mouse Y");
+    			//	tracker.SensorOffset.localPosition = pos;
+    			//}
+    			//else
+    			//	tracker.SensorOffset.localPosition = tracker.GetPosition() - trackerPosition;
     		}
     	}
     }

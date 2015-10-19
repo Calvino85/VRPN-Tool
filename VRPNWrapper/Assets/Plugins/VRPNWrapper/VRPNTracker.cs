@@ -91,7 +91,7 @@ using System.Runtime.InteropServices;
 public class VRPNTracker : MonoBehaviour {
     
     // VRPN Tracker Report Structure   
-	[ StructLayout( LayoutKind.Sequential, Pack=1 )] // set Pack=0 for Windows and Pack=1 for OSX
+	[ StructLayout( LayoutKind.Sequential, Pack=0 )] // set Pack=0 for Windows and Pack=1 for OSX
 	public struct TrackerReport
 	{
     	public VRPNManager.TimeVal msg_time;
@@ -108,8 +108,8 @@ public class VRPNTracker : MonoBehaviour {
 	public enum Transform_Type { None=1, Position=2, Orientation=3, Both=4 }; 
         
     // Public Properties
-    public VRPNManager.Tracker_Types TrackerType;
-    public VRPNDeviceConfig.Device_Names TrackerName;
+    public VRPNManager.Tracker_Types TrackerType = VRPNManager.Tracker_Types.vrpn_Tracker_RazerHydra;
+    public VRPNDeviceConfig.Device_Names TrackerName = VRPNDeviceConfig.Device_Names.Tracker0;
     public Transform_Type ApplyTracking = Transform_Type.Both; 
     public Derivation_Type Derivation = Derivation_Type.None;  
     public Transform DeviceToUnity;
@@ -143,7 +143,7 @@ public class VRPNTracker : MonoBehaviour {
 		return trackerQuat;
 	}
 	
-    [DllImport ("VRPNWrapper/VRPNWrapper")]
+    [DllImport ("VRPNWrapper")]
     private static extern void VRPNTrackerStart(string name, int deriv);
 
     void Start () {
@@ -197,13 +197,13 @@ public class VRPNTracker : MonoBehaviour {
     
     	//GetLatestPosQuat();
     	GetAveragePosQuat();
-    	if (TrackerType == VRPNManager.Tracker_Types.vrpn_Tracker_GPS)
-    	{
-    		Vector3 tmp = trackerPos;
-	    	trackerPos.x = tmp[1];
-  		  	trackerPos.y = tmp[2];
-    		trackerPos.z = tmp[0];
-    	}
+    	//if (TrackerType == VRPNManager.Tracker_Types.vrpn_Tracker_GPS)
+    	//{
+    	//	Vector3 tmp = trackerPos;
+	    //	trackerPos.x = tmp[1];
+  		 // 	trackerPos.y = tmp[2];
+    	//	trackerPos.z = tmp[0];
+    	//}
 		if (ApplyTracking == Transform_Type.Both)
 		{
 			pos = trackerPos;
@@ -234,12 +234,12 @@ public class VRPNTracker : MonoBehaviour {
     		{
     			//update the transform with the position and orientation of the tracker
     			pos = DeviceToUnity.InverseTransformPoint(pos);
-    	    	if ( TrackerType == VRPNManager.Tracker_Types.vrpn_Tracker_GPS )
-    	    	{
-    				Vector3 scale = LatLongToMeter(DeviceToUnity.localPosition.z);
-    				pos[0] *= scale[0];
-    				pos[2] *= scale[2];
-    	    	}
+    	   // 	if ( TrackerType == VRPNManager.Tracker_Types.vrpn_Tracker_GPS )
+    	   // 	{
+    				//Vector3 scale = LatLongToMeter(DeviceToUnity.localPosition.z);
+    				//pos[0] *= scale[0];
+    				//pos[2] *= scale[2];
+    	   // 	}
 				quat = Quaternion.Inverse(DeviceToUnity.localRotation) * quat;
     			if (SensorOffset != null)
     			{
@@ -272,7 +272,7 @@ public class VRPNTracker : MonoBehaviour {
 		}
 	}
 	
-    [DllImport ("VRPNWrapper/VRPNWrapper")]
+    [DllImport ("VRPNWrapper")]
     private static extern void VRPNTrackerPosReport(string name, [In,Out] IntPtr rep, [Out] IntPtr ts, int sensor);
 
 	void GetLatestPosQuat()
@@ -290,10 +290,10 @@ public class VRPNTracker : MonoBehaviour {
 		LastReport.tv_usec = rep.msg_time.tv_usec;
 	}	
 	
-    [DllImport ("VRPNWrapper/VRPNWrapper")]
+    [DllImport ("VRPNWrapper")]
     private static extern int VRPNTrackerNumPosReports(string name);
 
-    [DllImport ("VRPNWrapper/VRPNWrapper")]
+    [DllImport ("VRPNWrapper")]
     private static extern void VRPNTrackerPosReports(string name, [In,Out] IntPtr[] repsPtr, [In,Out] ref int nmbr);
 
 	void GetAveragePosQuat()

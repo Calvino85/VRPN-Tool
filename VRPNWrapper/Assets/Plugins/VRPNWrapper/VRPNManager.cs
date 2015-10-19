@@ -109,16 +109,16 @@ public class VRPNManager : MonoBehaviour
 	private int debug_buffer_max = 500;
 	private int debug_lines = 8;
 		   
-	[DllImport ("VRPNWrapper/VRPNWrapper")]
+	[DllImport ("VRPNWrapper")]
 	private static extern void VRPNServerStart(string file, string location);
 
-	[DllImport ("VRPNWrapper/VRPNWrapper")]
+	[DllImport ("VRPNWrapper")]
 	private static extern void VRPNServerStop();
 
-	[DllImport ("VRPNWrapper/VRPNWrapper")]
+	[DllImport ("VRPNWrapper")]
 	private static extern void VRPNServerLoop();
 	
-	[DllImport ("VRPNWrapper/VRPNWrapper")]
+	[DllImport ("VRPNWrapper")]
 	private static extern void VRPNSetOutput(int handle);
 	
 	void Start()
@@ -348,87 +348,95 @@ public class VRPNManager : MonoBehaviour
    }
    
    public enum Tracker_Types {
-		vrpn_3DConnexion_Navigator,
-		vrpn_3DConnexion_SpaceBall5000,
-		vrpn_3DConnexion_SpaceExplorer,
-		vrpn_3DConnexion_SpaceMouse,
-		vrpn_3DConnexion_Traveler,
-		vrpn_3DMicroscribe,
-		vrpn_5dt,
-		vrpn_5dt16,
-		vrpn_Analog_USDigital_A2,
-		vrpn_Auxiliary_Logger_Server_Generic,
-		vrpn_Button_5DT_Server,
-		vrpn_Button_NI_DIO24,
-		vrpn_Button_PinchGlove,
-		vrpn_Button_Python,
-		vrpn_Button_SerialMouse,
-		vrpn_CerealBox,
-		vrpn_Dial_Example,
-		vrpn_DirectXFFJoystick,
-		vrpn_DirectXRumblePad,
-		vrpn_GlobalHapticsOrb,
-		vrpn_Imager_Stream_Buffer,
-		vrpn_ImmersionBox,
-		vrpn_JoyFly,
-		vrpn_Joylin,
-		vrpn_Joystick,
-		vrpn_Joywin32,
-		vrpn_Keyboard,
-		vrpn_Magellan,
-		vrpn_Mouse,
-		vrpn_National_Instruments,
-		vrpn_NI_Analog_Output,
-		vrpn_nikon_controls,
-		vrpn_Phantom,
-		vrpn_Poser_Analog,
-		vrpn_Radamec_SPI,
-		vrpn_raw_SGIBox,
-		vrpn_SGIBOX,
-		vrpn_Spaceball,
-		vrpn_Tek4662,
-		vrpn_TimeCode_Generator,
-		vrpn_Tng3,
-		vrpn_Tracker_3DMouse,
-		vrpn_Tracker_3Space,
-		vrpn_Tracker_AnalogFly,
-		vrpn_Tracker_ButtonFly,
-		vrpn_Tracker_Crossbow,
-		vrpn_Tracker_DTrack,
-		vrpn_Tracker_Dyna,
-		vrpn_Tracker_Fastrak,
-		vrpn_Tracker_Flock,
-		vrpn_Tracker_Flock_Parallel,
-		vrpn_Tracker_GPS,
-		vrpn_Tracker_InterSense,
-		vrpn_Tracker_Liberty,
-		vrpn_Tracker_MotionNode,
-		vrpn_Tracker_NULL,
-		vrpn_Tracker_PhaseSpace,
-		vrpn_VPJoystick,
-		vrpn_Wanda,
-		vrpn_WiiMote,
-		vrpn_XInputGamepad,
-		vrpn_Xkeys_Desktop,
-		vrpn_Xkeys_Jog_And_Shuttle,
-		vrpn_Xkeys_Joystick,
-		vrpn_Xkeys_Pro,
-		vrpn_Zaber }; 
+        vrpn_Tracker_RazerHydra
+        //vrpn_3DConnexion_Navigator,
+        //vrpn_3DConnexion_SpaceBall5000,
+        //vrpn_3DConnexion_SpaceExplorer,
+        //vrpn_3DConnexion_SpaceMouse,
+        //vrpn_3DConnexion_Traveler,
+        //vrpn_3DMicroscribe,
+        //vrpn_5dt,
+        //vrpn_5dt16,
+        //vrpn_Analog_USDigital_A2,
+        //vrpn_Auxiliary_Logger_Server_Generic,
+        //vrpn_Button_5DT_Server,
+        //vrpn_Button_NI_DIO24,
+        //vrpn_Button_PinchGlove,
+        //vrpn_Button_Python,
+        //vrpn_Button_SerialMouse,
+        //vrpn_CerealBox,
+        //vrpn_Dial_Example,
+        //vrpn_DirectXFFJoystick,
+        //vrpn_DirectXRumblePad,
+        //vrpn_GlobalHapticsOrb,
+        //vrpn_Imager_Stream_Buffer,
+        //vrpn_ImmersionBox,
+        //vrpn_JoyFly,
+        //vrpn_Joylin,
+        //vrpn_Joystick,
+        //vrpn_Joywin32,
+        //vrpn_Keyboard,
+        //vrpn_Magellan,
+        //vrpn_Mouse,
+        //vrpn_National_Instruments,
+        //vrpn_NI_Analog_Output,
+        //vrpn_nikon_controls,
+        //vrpn_Phantom,
+        //vrpn_Poser_Analog,
+        //vrpn_Radamec_SPI,
+        //vrpn_raw_SGIBox,
+        //vrpn_SGIBOX,
+        //vrpn_Spaceball,
+        //vrpn_Tek4662,
+        //vrpn_TimeCode_Generator,
+        //vrpn_Tng3,
+        //vrpn_Tracker_3DMouse,
+        //vrpn_Tracker_3Space,
+        //vrpn_Tracker_AnalogFly,
+        //vrpn_Tracker_ButtonFly,
+        //vrpn_Tracker_Crossbow,
+        //vrpn_Tracker_DTrack,
+        //vrpn_Tracker_Dyna,
+        //vrpn_Tracker_Fastrak,
+        //vrpn_Tracker_Flock,
+        //vrpn_Tracker_Flock_Parallel,
+        //vrpn_Tracker_GPS,
+        //vrpn_Tracker_InterSense,
+        //vrpn_Tracker_Liberty,
+        //vrpn_Tracker_MotionNode,
+        //vrpn_Tracker_NULL,
+        //vrpn_Tracker_PhaseSpace,
+        //vrpn_VPJoystick,
+        //vrpn_Wanda,
+        //vrpn_WiiMote,
+        //vrpn_XInputGamepad,
+        //vrpn_Xkeys_Desktop,
+        //vrpn_Xkeys_Jog_And_Shuttle,
+        //vrpn_Xkeys_Joystick,
+        //vrpn_Xkeys_Pro,
+        //vrpn_Zaber
+    }; 
   
 	public enum Button_Types {
-		vrpn_Button_5DT_Server,
-		vrpn_Button_NI_DIO24,
-		vrpn_Button_PinchGlove,
-		vrpn_Button_Python,
-		vrpn_Button_SerialMouse,
-		vrpn_WiiMote,
-		vrpn_XInputGamepad
-	};
+        vrpn_Mouse,
+        vrpn_3DConnexion_Navigator,
+        vrpn_Tracker_RazerHydra
+        //vrpn_Button_5DT_Server,
+        //vrpn_Button_NI_DIO24,
+        //vrpn_Button_PinchGlove,
+        //vrpn_Button_Python,
+        //vrpn_Button_SerialMouse,
+        //vrpn_WiiMote,
+        //vrpn_XInputGamepad
+    };
 	
 	public enum Analog_Types
 	{
-		vrpn_WiiMote,
-		vrpn_XInputGamepad
-	};
+        vrpn_Mouse,
+        vrpn_3DConnexion_Navigator,
+        vrpn_Tracker_RazerHydra
+        //vrpn_WiiMote,
+        //vrpn_XInputGamepad
+    };
 
 }

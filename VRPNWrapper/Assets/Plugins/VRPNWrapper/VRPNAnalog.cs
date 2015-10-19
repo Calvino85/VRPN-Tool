@@ -94,10 +94,12 @@ public class VRPNAnalog : MonoBehaviour {
     
     // Class Properties
 	public static int num_analogs = 0;
-    
+
     // Public Properties
-    public VRPNManager.Analog_Types AnalogType = VRPNManager.Analog_Types.vrpn_XInputGamepad;
-    public VRPNDeviceConfig.Device_Names AnalogName = VRPNDeviceConfig.Device_Names.XInput0;
+    public VRPNManager.Analog_Types AnalogType = VRPNManager.Analog_Types.vrpn_Mouse;
+    public VRPNDeviceConfig.Device_Names AnalogName = VRPNDeviceConfig.Device_Names.Mouse0;
+    //public VRPNManager.Analog_Types AnalogType = VRPNManager.Analog_Types.vrpn_XInputGamepad;
+    //public VRPNDeviceConfig.Device_Names AnalogName = VRPNDeviceConfig.Device_Names.XInput0;
     public int MaxReports = 20;
     public bool purgeReports = true;
     public bool useLastReportTime = false;
@@ -111,16 +113,16 @@ public class VRPNAnalog : MonoBehaviour {
 	private int debug_xoffset;
     
     // DLL Function Imports
-    [DllImport ("VRPNWrapper/VRPNWrapper")]
+    [DllImport ("VRPNWrapper")]
     private static extern void VRPNAnalogStart(string name);
         
-    [DllImport ("VRPNWrapper/VRPNWrapper")]
+    [DllImport ("VRPNWrapper")]
     private static extern void VRPNAnalogReport(string name, [In, Out] IntPtr rep, [Out] IntPtr ts, int button);
     
-    [DllImport ("VRPNWrapper/VRPNWrapper")]
+    [DllImport ("VRPNWrapper")]
     private static extern int VRPNAnalogNumReports(string name);
 
-    [DllImport ("VRPNWrapper/VRPNWrapper")]
+    [DllImport ("VRPNWrapper")]
     private static extern void VRPNAnalogReports(string name, [In, Out] IntPtr[] reportsPtr, [In, Out] ref int cnt, [In, MarshalAs(UnmanagedType.LPStruct)] VRPNManager.TimeVal ts, bool clearReport);
 
 
