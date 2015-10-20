@@ -91,7 +91,7 @@ public class Plugins : MonoBehaviour {
 		#if !UNITY_IPHONE
 
 		string cwd = ApplicationDataPath();
-		Debug.Log("[CWD]"+cwd);
+		//Debug.Log("[CWD]"+cwd);
 		string dataDirName = "Plugins";
 		String dataDirectory = Path.Combine(cwd,dataDirName);
 			
@@ -114,7 +114,7 @@ public class Plugins : MonoBehaviour {
 		}
 					
 		string oldPath = System.Environment.GetEnvironmentVariable(environVar);
-		Debug.Log("[Old Path]"+oldPath);
+		//Debug.Log("[Old Path]"+oldPath);
 		String pluginPath;
 		if (useProjectDir)
 			pluginPath = Path.Combine(dataDirectory,subpath);
@@ -124,11 +124,11 @@ public class Plugins : MonoBehaviour {
 		if(oldPath == null || !oldPath.Contains(pluginPath))
 		{
 			string newPath = oldPath + separator + pluginPath +"/";
-			Debug.Log("[New Path]"+newPath);
+			//Debug.Log("[New Path]"+newPath);
 			System.Environment.SetEnvironmentVariable(environVar,newPath);
 			System.Environment.SetEnvironmentVariable("PATH",newPath);
 		}else{
-			Debug.Log("Path already contains plugin dir");
+			//Debug.Log("Path already contains plugin dir");
 		}
 				
 		#endif

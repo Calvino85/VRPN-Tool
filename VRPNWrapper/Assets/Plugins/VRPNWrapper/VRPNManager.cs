@@ -123,9 +123,9 @@ public class VRPNManager : MonoBehaviour
 	
 	void Start()
 	{
-		Debug.Log("VRPNManager: Start");
-		//create parsed vrpn config file from ConfigFile and store as configuration lines
-		if (Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.WindowsEditor)
+        //Debug.Log("VRPNManager: Start");
+        //create parsed vrpn config file from ConfigFile and store as configuration lines
+        if (Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.WindowsEditor)
 			ParseConfigFile();
 			
 		// Set up debug window
@@ -148,7 +148,7 @@ public class VRPNManager : MonoBehaviour
 	
 	void OnDisable()
 	{
-		Debug.Log("VRPNManager: OnDisable");
+		//Debug.Log("VRPNManager: OnDisable");
 		// TODO: investigate why the server doesn't shut down properly
 		VRPNServerStop();
 		if (ShowDebug) 
@@ -193,14 +193,14 @@ public class VRPNManager : MonoBehaviour
 	
 	void ParseConfigFile()
 	{
-		Debug.Log("VRPNManager: ParseConfigFile");		
+		//Debug.Log("VRPNManager: ParseConfigFile");		
 		int index = 0;
 		ArrayList potential_names = new ArrayList();
 		try
 		{
 			//recreate config file from txt file in Assets/Resources
   			string filepath = Plugins.CreateFileFromAsset(ConfigFile);
-			print ("configuration read file: " + filepath);
+			//print ("configuration read file: " + filepath);
 			FileStream reads = new FileStream(filepath, System.IO.FileMode.Open, FileAccess.Read);
 			StreamReader sr = new StreamReader(reads);
 			string line = sr.ReadLine();
@@ -251,7 +251,7 @@ public class VRPNManager : MonoBehaviour
 			}
 			if (changed)
 			{
-				Debug.Log("updating device names in VRPNDeviceConfig.cs");
+				//Debug.Log("updating device names in VRPNDeviceConfig.cs");
 				string filename = Application.dataPath + "/../Assets/Plugins/VRPNWrapper/VRPNDeviceConfig.cs";
 				FileStream write_stream = new FileStream(filename, System.IO.FileMode.Create, FileAccess.Write);
 				StreamWriter sw = new StreamWriter(write_stream);
@@ -281,7 +281,7 @@ public class VRPNManager : MonoBehaviour
 	
 	void CreateConfigFile(string file)
 	{
-		Debug.Log("VRPNManager: CreateConfigFile");
+		//Debug.Log("VRPNManager: CreateConfigFile");
 		try
 		{
 			FileStream write_stream = new FileStream(file, System.IO.FileMode.Create, FileAccess.Write);
@@ -337,7 +337,7 @@ public class VRPNManager : MonoBehaviour
 	
 	public static bool TimeValGreater(ref TimeVal tv1, ref TimeVal tv2)
 	{
-		Debug.Log("VRPNManager: TimeValGreater");
+		//Debug.Log("VRPNManager: TimeValGreater");
 
 		
 		if (tv1.tv_sec > tv2.tv_sec) 

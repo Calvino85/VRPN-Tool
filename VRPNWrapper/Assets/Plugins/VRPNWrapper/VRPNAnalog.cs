@@ -184,6 +184,7 @@ public class VRPNAnalog : MonoBehaviour {
             for (i = 0; i < num; i++)
             {
                 reports[i] = (AnalogReport)Marshal.PtrToStructure(reportsPtr[i], typeof(AnalogReport));
+                VRPNEventManager.TriggerEventAnalog(AnalogType.ToString(), AnalogName.ToString(), reports[i]);
                 messageString = "<";
                 for (int j = 0; j < reports[i].num_channel; j++)
                 {

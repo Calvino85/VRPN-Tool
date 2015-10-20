@@ -181,6 +181,7 @@ public class VRPNButton : MonoBehaviour {
             for (i = 0; i < num; i++)
             {
                 reports[i] = (ButtonReport)Marshal.PtrToStructure(reportsPtr[i],typeof(ButtonReport));
+                VRPNEventManager.TriggerEventButton(ButtonType.ToString(), ButtonName.ToString(), reports[i]);
                 if (ShowDebug) reportString += "\n " + reports[i].button + "->" + reports[i].state + " @ " + reports[i].msg_time.tv_sec + "." + reports[i].msg_time.tv_usec;
             }
             

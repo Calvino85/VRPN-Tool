@@ -306,7 +306,8 @@ public class VRPNTracker : MonoBehaviour {
 		for (int i=0; i<num; i++)
 			{
 			reps[i] = (TrackerReport)Marshal.PtrToStructure(repsPtr[i],typeof(TrackerReport));
-			if (reps[i].sensor == SensorNumber && VRPNManager.TimeValGreater(ref reps[i].msg_time,ref LastReport))
+            VRPNEventManager.TriggerEventTracker(TrackerType.ToString(), TrackerName.ToString(), reps[i]);
+            if (reps[i].sensor == SensorNumber && VRPNManager.TimeValGreater(ref reps[i].msg_time,ref LastReport))
 			{
 				repsSum[0] += (float)reps[i].pos[0];
 				repsSum[1] += (float)reps[i].pos[1];
@@ -320,7 +321,7 @@ public class VRPNTracker : MonoBehaviour {
 				repsCount++;
 			}
 		}
-		if (repsCount > 0)
+        if (repsCount > 0)
 		{
 		    trackerPos.x = repsSum[0]/(float)repsCount;
 	  		trackerPos.y = repsSum[1]/(float)repsCount;
