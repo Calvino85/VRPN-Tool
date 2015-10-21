@@ -84,7 +84,8 @@ public class VRPNAnalog : MonoBehaviour {
     const int MAX_ANALOG_CHANNELS = 128;
     
     [ StructLayout( LayoutKind.Sequential)]
-	public struct AnalogReport
+    [Serializable]
+    public struct AnalogReport
 	{
     	public VRPNManager.TimeVal msg_time;
      	public int num_channel;
@@ -100,9 +101,9 @@ public class VRPNAnalog : MonoBehaviour {
     public VRPNDeviceConfig.Device_Names AnalogName = VRPNDeviceConfig.Device_Names.Mouse0;
     //public VRPNManager.Analog_Types AnalogType = VRPNManager.Analog_Types.vrpn_XInputGamepad;
     //public VRPNDeviceConfig.Device_Names AnalogName = VRPNDeviceConfig.Device_Names.XInput0;
-    public int MaxReports = 20;
-    public bool purgeReports = true;
-    public bool useLastReportTime = false;
+    private int MaxReports = 20;
+    private bool purgeReports = true;
+    private bool useLastReportTime = false;
     public bool ShowDebug = false;
     
     // Private Variables;

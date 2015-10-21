@@ -82,7 +82,8 @@ public class VRPNButton : MonoBehaviour {
 
     // VRPN Button Report Structure    
     [ StructLayout( LayoutKind.Sequential, Pack=0 )]
-	public struct ButtonReport
+    [Serializable]
+    public struct ButtonReport
 	{
     	public VRPNManager.TimeVal msg_time;
      	public int button;
@@ -97,10 +98,10 @@ public class VRPNButton : MonoBehaviour {
     public VRPNDeviceConfig.Device_Names ButtonName = VRPNDeviceConfig.Device_Names.Mouse0;
     //public VRPNManager.Button_Types ButtonType = VRPNManager.Button_Types.vrpn_XInputGamepad;
     //public VRPNDeviceConfig.Device_Names ButtonName = VRPNDeviceConfig.Device_Names.XInput0;
-    public int ButtonNumber = -1;
-    public int MaxReports = 20;
-    public bool purgeReports = true;
-    public bool useLastReportTime = false;
+    private int ButtonNumber = -1;
+    private int MaxReports = 20;
+    private bool purgeReports = true;
+    private bool useLastReportTime = false;
     public bool ShowDebug = false;
     
     // Private Variables

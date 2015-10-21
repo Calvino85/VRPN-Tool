@@ -89,13 +89,21 @@ public class VRPNManager : MonoBehaviour
 {   
 
 	[ StructLayout( LayoutKind.Sequential )]
-	public struct TimeVal
+    [Serializable]
+    public struct TimeVal
 	{
 		public UInt32 tv_sec;
 		public UInt32 tv_usec;
 	}
-		
-	public string ServerAddress = "";
+
+    [Serializable]
+    public struct TimeValNew
+    {
+        public int tv_sec;
+        public int tv_usec;
+    }
+
+    public string ServerAddress = "";
 	public string ConfigFile = "vrpn.cfg";
 	public static bool debug_flag = false;
 	public bool ShowDebug = false;

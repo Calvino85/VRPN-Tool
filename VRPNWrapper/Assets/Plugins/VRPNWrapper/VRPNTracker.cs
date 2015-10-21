@@ -84,7 +84,8 @@
  * ========================================================================*/
 
 using UnityEngine;
-using System.Collections; 
+using System.Collections;
+using System.Collections.Generic;
 using System;
 using System.Runtime.InteropServices;
 
@@ -92,7 +93,8 @@ public class VRPNTracker : MonoBehaviour {
     
     // VRPN Tracker Report Structure   
 	[ StructLayout( LayoutKind.Sequential, Pack=0 )] // set Pack=0 for Windows and Pack=1 for OSX
-	public struct TrackerReport
+    [Serializable]
+    public struct TrackerReport
 	{
     	public VRPNManager.TimeVal msg_time;
      	public int sensor;
@@ -102,20 +104,39 @@ public class VRPNTracker : MonoBehaviour {
     	public double[] quat;
  	}
 
+    [Serializable]
+    public class TrackerReports
+    {
+        public string deviceType;
+        public string deviceName;
+        public List<TrackerReportNew> list = new List<TrackerReportNew>();
+    }
+
+    [Serializable]
+    public struct TrackerReportNew
+    {
+        public VRPNManager.TimeValNew msg_time;
+        public int sensor;
+        public double[] pos;
+        public double[] quat;
+    }
+
     // Class Properties
-	public static int num_trackers = 0;
+    public static int num_trackers = 0;
 	public enum Derivation_Type { None=1, Velocity=2, Acceleration=4 };          
 	public enum Transform_Type { None=1, Position=2, Orientation=3, Both=4 }; 
         
     // Public Properties
     public VRPNManager.Tracker_Types TrackerType = VRPNManager.Tracker_Types.vrpn_Tracker_RazerHydra;
     public VRPNDeviceConfig.Device_Names TrackerName = VRPNDeviceConfig.Device_Names.Tracker0;
-    public Transform_Type ApplyTracking = Transform_Type.Both; 
-    public Derivation_Type Derivation = Derivation_Type.None;  
-    public Transform DeviceToUnity;
+    [HideInInspector]
+    public Transform_Type ApplyTracking = Transform_Type.None;
+    private Derivation_Type Derivation = Derivation_Type.None;
+    private Transform DeviceToUnity;
+    [HideInInspector]
     public Transform SensorOffset;   
     public int SensorNumber = 0;
-    public int MaxReports = 20;
+    private int MaxReports = 20;
     public bool ShowDebug = false;
     
     // Private Variables
@@ -305,11 +326,11 @@ public class VRPNTracker : MonoBehaviour {
 		TrackerReport[] reps = new TrackerReport[num];
 		for (int i=0; i<num; i++)
 			{
-			reps[i] = (TrackerReport)Marshal.PtrToStructure(repsPtr[i],typeof(TrackerReport));
-            VRPNEventManager.TriggerEventTracker(TrackerType.ToString(), TrackerName.ToString(), reps[i]);
+            reps[i] = (TrackerReport)Marshal.PtrToStructure(repsPtr[i],typeof(TrackerReport));
             if (reps[i].sensor == SensorNumber && VRPNManager.TimeValGreater(ref reps[i].msg_time,ref LastReport))
 			{
-				repsSum[0] += (float)reps[i].pos[0];
+                VRPNEventManager.TriggerEventTracker(TrackerType.ToString(), TrackerName.ToString(), reps[i]);
+                repsSum[0] += (float)reps[i].pos[0];
 				repsSum[1] += (float)reps[i].pos[1];
 				repsSum[2] += (float)reps[i].pos[2];
 				repsSum[3] += (float)reps[i].quat[2];	
