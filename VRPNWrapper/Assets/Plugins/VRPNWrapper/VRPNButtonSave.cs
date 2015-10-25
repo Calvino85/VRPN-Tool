@@ -9,13 +9,13 @@
  *
  * ========================================================================
  *
- * VRPNTrackerSave.cs
+ * VRPNButtonSave.cs
  *
- * usage: Must be added once for each tracker that is desired to record.
+ * usage: Must be added once for each button that is desired to record.
  * 
  * inputs:
- * TrackerType   - VRPN tracker device name from configuration file
- * TrackerName   - name assigned to the device in its configuration line
+ * ButtonType   - VRPN button device name from configuration file
+ * ButtonName   - name assigned to the device in its configuration line
  *
  * Notes:
  *
@@ -28,13 +28,14 @@ using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
-public class VRPNTrackerSave : MonoBehaviour {
+public class VRPNButtonSave : MonoBehaviour
+{
     //Public Properties
-    public VRPNManager.Tracker_Types TrackerType = VRPNManager.Tracker_Types.vrpn_Tracker_RazerHydra;
-    public VRPNDeviceConfig.Device_Names TrackerName = VRPNDeviceConfig.Device_Names.Tracker0;
+    public VRPNManager.Button_Types ButtonType = VRPNManager.Button_Types.vrpn_Mouse;
+    public VRPNDeviceConfig.Device_Names ButtonName = VRPNDeviceConfig.Device_Names.Mouse0;
 
     //Private Properties
-    private VRPNTracker.TrackerReports data = new VRPNTracker.TrackerReports();
+    private VRPNButton.ButtonReports data = new VRPNButton.ButtonReports();
     private bool firstReport = true;
     private UInt32 firstTime_sec;
     private UInt32 firstTime_usec;
@@ -45,14 +46,14 @@ public class VRPNTrackerSave : MonoBehaviour {
     public void StartRecording(string nPath)
     {
         path = nPath;
-        data.deviceType = TrackerType.ToString();
-        data.deviceName = TrackerName.ToString();
-        VRPNEventManager.StartListeningTracker(TrackerType.ToString(), TrackerName.ToString(), Record);
+        data.deviceType = ButtonType.ToString();
+        data.deviceName = ButtonName.ToString();
+        VRPNEventManager.StartListeningButton(ButtonType.ToString(), ButtonName.ToString(), Record);
     }
 
     //This is the listener that is called by the event manager
     //It transforms and adds the received report to the reports list
-    void Record(string name, VRPNTracker.TrackerReport report)
+    void Record(string name, VRPNButton.ButtonReport report)
     {
         if (firstReport)
         {
@@ -70,14 +71,13 @@ public class VRPNTrackerSave : MonoBehaviour {
             report.msg_time.tv_sec = report.msg_time.tv_sec - firstTime_sec;
             report.msg_time.tv_usec = report.msg_time.tv_usec - firstTime_usec;
         }
-        VRPNTracker.TrackerReportNew newReport = new VRPNTracker.TrackerReportNew();
+        VRPNButton.ButtonReportNew newReport = new VRPNButton.ButtonReportNew();
         VRPNManager.TimeValNew newMsgTime = new VRPNManager.TimeValNew();
         newMsgTime.tv_sec = (int)report.msg_time.tv_sec;
         newMsgTime.tv_usec = (int)report.msg_time.tv_usec;
         newReport.msg_time = newMsgTime;
-        newReport.pos = report.pos;
-        newReport.quat = report.quat;
-        newReport.sensor = report.sensor;
+        newReport.button = report.button;
+        newReport.state = report.state;
         data.list.Add(newReport);
     }
 
@@ -85,13 +85,13 @@ public class VRPNTrackerSave : MonoBehaviour {
     //It saves the reports list in the indicated path
     public void StopRecording()
     {
-        VRPNEventManager.StopListeningTracker(TrackerType.ToString(), TrackerName.ToString(), Record);
+        VRPNEventManager.StopListeningButton(ButtonType.ToString(), ButtonName.ToString(), Record);
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(path);
 
         bf.Serialize(file, data);
         file.Close();
-        data = new VRPNTracker.TrackerReports();
+        data = new VRPNButton.ButtonReports();
         firstReport = true;
     }
 

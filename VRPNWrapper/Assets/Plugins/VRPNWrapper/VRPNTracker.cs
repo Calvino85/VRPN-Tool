@@ -56,7 +56,7 @@
  *
  * ========================================================================
  ** @author   Alex Hill (ahill@gatech.edu)
- *
+ *  @modified by    Andrés Roberto Gómez (and-gome@uniandes.edu.co)
  * ========================================================================
  *
  * VRPNTracker.cs
@@ -104,6 +104,7 @@ public class VRPNTracker : MonoBehaviour {
     	public double[] quat;
  	}
 
+    //Structure to serialize tracker reports
     [Serializable]
     public class TrackerReports
     {
@@ -112,6 +113,7 @@ public class VRPNTracker : MonoBehaviour {
         public List<TrackerReportNew> list = new List<TrackerReportNew>();
     }
 
+    //Serializable tracker report
     [Serializable]
     public struct TrackerReportNew
     {
@@ -329,6 +331,8 @@ public class VRPNTracker : MonoBehaviour {
             reps[i] = (TrackerReport)Marshal.PtrToStructure(repsPtr[i],typeof(TrackerReport));
             if (reps[i].sensor == SensorNumber && VRPNManager.TimeValGreater(ref reps[i].msg_time,ref LastReport))
 			{
+                //Trigger tracker event in event manager
+                //It must be done here or it will repeat a lot of reports
                 VRPNEventManager.TriggerEventTracker(TrackerType.ToString(), TrackerName.ToString(), reps[i]);
                 repsSum[0] += (float)reps[i].pos[0];
 				repsSum[1] += (float)reps[i].pos[1];

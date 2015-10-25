@@ -11,7 +11,8 @@
  *
  * VRPNEventManager.cs
  *
- * usage: 
+ * usage: Must be added once in the scene to receive and send vrpn events. 
+ * It comes in VRPNEventManager prefab.
  * 
  * inputs:
  *
@@ -23,13 +24,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
-
-public enum VRPNDeviceType
-{
-    Button,
-    Analog,
-    Tracker
-}
 
 //Unity Event for Button Report
 public class VRPNButtonEvent : UnityEvent<string, VRPNButton.ButtonReport>

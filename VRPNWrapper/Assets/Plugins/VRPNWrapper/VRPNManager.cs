@@ -56,7 +56,7 @@
  *
  * ========================================================================
  ** @author   Alex Hill (ahill@gatech.edu)
- *
+ *  @modified by    Andrés Roberto Gómez (and-gome@uniandes.edu.co)
  * ========================================================================
  *
  * VRPNConfig.cs
@@ -96,6 +96,7 @@ public class VRPNManager : MonoBehaviour
 		public UInt32 tv_usec;
 	}
 
+    //Serializable time report (UInt32 is not serializable)
     [Serializable]
     public struct TimeValNew
     {
@@ -148,7 +149,13 @@ public class VRPNManager : MonoBehaviour
 	 	//create vrpn config file of active trackers from configuration lines
 		string filepath = Plugins.ApplicationDataPath() + "/unity_vrpn.cfg";
 		CreateConfigFile(filepath);
-		
+        
+        //Right now there are problems with the local server (started by the app), so empty server address is not allowed
+        if (ServerAddress.Equals(""))
+        {
+            ServerAddress = "localhost";
+        }
+
 		// Start Server (or get access to external server)
 		VRPNServerStart(filepath,ServerAddress);
 	 	initialized = true;

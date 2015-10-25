@@ -56,7 +56,7 @@
  *
  * ========================================================================
  ** @author   Alex Hill (ahill@gatech.edu)
- *
+ *  @modified by    Andrés Roberto Gómez (and-gome@uniandes.edu.co)
  * ========================================================================
  *
  * VRPNButton.cs
@@ -70,6 +70,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 using System.Runtime.InteropServices;
 
@@ -90,8 +91,26 @@ public class VRPNButton : MonoBehaviour {
      	public int state;
  	}
 
+    //Structure to serialize button reports
+    [Serializable]
+    public class ButtonReports
+    {
+        public string deviceType;
+        public string deviceName;
+        public List<ButtonReportNew> list = new List<ButtonReportNew>();
+    }
+
+    //Serializable button report
+    [Serializable]
+    public struct ButtonReportNew
+    {
+        public VRPNManager.TimeValNew msg_time;
+        public int button;
+        public int state;
+    }
+
     // Class Properties
-	public static int num_buttons = 0;
+    public static int num_buttons = 0;
 
     // Public Properties
     public VRPNManager.Button_Types ButtonType = VRPNManager.Button_Types.vrpn_Mouse;
@@ -182,6 +201,7 @@ public class VRPNButton : MonoBehaviour {
             for (i = 0; i < num; i++)
             {
                 reports[i] = (ButtonReport)Marshal.PtrToStructure(reportsPtr[i],typeof(ButtonReport));
+                //Trigger button event in event manager
                 VRPNEventManager.TriggerEventButton(ButtonType.ToString(), ButtonName.ToString(), reports[i]);
                 if (ShowDebug) reportString += "\n " + reports[i].button + "->" + reports[i].state + " @ " + reports[i].msg_time.tv_sec + "." + reports[i].msg_time.tv_usec;
             }

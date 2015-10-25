@@ -9,9 +9,9 @@
  *
  * ========================================================================
  *
- * VRPNTrackerPlay.cs
+ * VRPNButtonPlay.cs
  *
- * usage: Must be added once for each tracker that is desired to play.
+ * usage: Must be added once for each button that is desired to play.
  * 
  * inputs:
  *
@@ -26,16 +26,16 @@ using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
-public class VRPNTrackerPlay : MonoBehaviour
+public class VRPNButtonPlay : MonoBehaviour
 {
     //Private properties
-    private VRPNTracker.TrackerReports data;
+    private VRPNButton.ButtonReports data;
     private bool playing = false;
     private bool firstReport = true;
     private float firstTime;
-    private List<VRPNTracker.TrackerReportNew>.Enumerator e;
-    private VRPNTracker.TrackerReportNew actualReport;
-    private VRPNTracker.TrackerReportNew lastReport;
+    private List<VRPNButton.ButtonReportNew>.Enumerator e;
+    private VRPNButton.ButtonReportNew actualReport;
+    private VRPNButton.ButtonReportNew lastReport;
 
     //Public method that allows to start playing
     //It reads the data from the indicated path
@@ -45,7 +45,7 @@ public class VRPNTrackerPlay : MonoBehaviour
         {
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(nPath, FileMode.Open);
-            data = (VRPNTracker.TrackerReports)bf.Deserialize(file);
+            data = (VRPNButton.ButtonReports)bf.Deserialize(file);
 
             file.Close();
 
@@ -57,7 +57,7 @@ public class VRPNTrackerPlay : MonoBehaviour
 
     void Update()
     {
-        if(playing)
+        if (playing)
         {
             float actualTime;
             float actualReportTime = 0f;
@@ -101,15 +101,14 @@ public class VRPNTrackerPlay : MonoBehaviour
                 }
                 else
                 {
-                    VRPNTracker.TrackerReport newReport = new VRPNTracker.TrackerReport();
+                    VRPNButton.ButtonReport newReport = new VRPNButton.ButtonReport();
                     VRPNManager.TimeVal newMsgTime = new VRPNManager.TimeVal();
                     newMsgTime.tv_sec = (UInt32)lastReport.msg_time.tv_sec;
                     newMsgTime.tv_usec = (UInt32)lastReport.msg_time.tv_usec;
                     newReport.msg_time = newMsgTime;
-                    newReport.pos = lastReport.pos;
-                    newReport.quat = lastReport.quat;
-                    newReport.sensor = lastReport.sensor;
-                    VRPNEventManager.TriggerEventTracker(data.deviceType, data.deviceName, newReport);
+                    newReport.button = lastReport.button;
+                    newReport.state = lastReport.state;
+                    VRPNEventManager.TriggerEventButton(data.deviceType, data.deviceName, newReport);
                     moreReports = false;
                 }
             }

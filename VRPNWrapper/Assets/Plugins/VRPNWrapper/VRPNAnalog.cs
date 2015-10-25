@@ -56,7 +56,7 @@
  *
  * ========================================================================
  ** @author   Alex Hill (ahill@gatech.edu)
- *
+ *  @modified by    Andrés Roberto Gómez (and-gome@uniandes.edu.co)
  * ========================================================================
  *
  * VRPNAnalog.cs
@@ -67,9 +67,10 @@
  * Notes:
  *
  * ========================================================================*/
- 
+
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 using System.Runtime.InteropServices;
 
@@ -92,9 +93,27 @@ public class VRPNAnalog : MonoBehaviour {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_ANALOG_CHANNELS)]
     	public double[] channel;
  	}
-    
+
+    //Structure to serialize analog sensor reports
+    [Serializable]
+    public class AnalogReports
+    {
+        public string deviceType;
+        public string deviceName;
+        public List<AnalogReportNew> list = new List<AnalogReportNew>();
+    }
+
+    //Serializable analog sensor report
+    [Serializable]
+    public struct AnalogReportNew
+    {
+        public VRPNManager.TimeValNew msg_time;
+        public int num_channel;
+        public double[] channel;
+    }
+
     // Class Properties
-	public static int num_analogs = 0;
+    public static int num_analogs = 0;
 
     // Public Properties
     public VRPNManager.Analog_Types AnalogType = VRPNManager.Analog_Types.vrpn_Mouse;
@@ -185,6 +204,7 @@ public class VRPNAnalog : MonoBehaviour {
             for (i = 0; i < num; i++)
             {
                 reports[i] = (AnalogReport)Marshal.PtrToStructure(reportsPtr[i], typeof(AnalogReport));
+                //Trigger analog sensor event in event manager
                 VRPNEventManager.TriggerEventAnalog(AnalogType.ToString(), AnalogName.ToString(), reports[i]);
                 messageString = "<";
                 for (int j = 0; j < reports[i].num_channel; j++)

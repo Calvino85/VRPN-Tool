@@ -9,9 +9,9 @@
  *
  * ========================================================================
  *
- * VRPNTrackerPlay.cs
+ * VRPNAnalogPlay.cs
  *
- * usage: Must be added once for each tracker that is desired to play.
+ * usage: Must be added once for each analog sensor that is desired to play.
  * 
  * inputs:
  *
@@ -26,16 +26,16 @@ using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
-public class VRPNTrackerPlay : MonoBehaviour
+public class VRPNAnalogPlay : MonoBehaviour
 {
     //Private properties
-    private VRPNTracker.TrackerReports data;
+    private VRPNAnalog.AnalogReports data;
     private bool playing = false;
     private bool firstReport = true;
     private float firstTime;
-    private List<VRPNTracker.TrackerReportNew>.Enumerator e;
-    private VRPNTracker.TrackerReportNew actualReport;
-    private VRPNTracker.TrackerReportNew lastReport;
+    private List<VRPNAnalog.AnalogReportNew>.Enumerator e;
+    private VRPNAnalog.AnalogReportNew actualReport;
+    private VRPNAnalog.AnalogReportNew lastReport;
 
     //Public method that allows to start playing
     //It reads the data from the indicated path
@@ -45,7 +45,7 @@ public class VRPNTrackerPlay : MonoBehaviour
         {
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(nPath, FileMode.Open);
-            data = (VRPNTracker.TrackerReports)bf.Deserialize(file);
+            data = (VRPNAnalog.AnalogReports)bf.Deserialize(file);
 
             file.Close();
 
@@ -57,7 +57,7 @@ public class VRPNTrackerPlay : MonoBehaviour
 
     void Update()
     {
-        if(playing)
+        if (playing)
         {
             float actualTime;
             float actualReportTime = 0f;
@@ -101,15 +101,14 @@ public class VRPNTrackerPlay : MonoBehaviour
                 }
                 else
                 {
-                    VRPNTracker.TrackerReport newReport = new VRPNTracker.TrackerReport();
+                    VRPNAnalog.AnalogReport newReport = new VRPNAnalog.AnalogReport();
                     VRPNManager.TimeVal newMsgTime = new VRPNManager.TimeVal();
                     newMsgTime.tv_sec = (UInt32)lastReport.msg_time.tv_sec;
                     newMsgTime.tv_usec = (UInt32)lastReport.msg_time.tv_usec;
                     newReport.msg_time = newMsgTime;
-                    newReport.pos = lastReport.pos;
-                    newReport.quat = lastReport.quat;
-                    newReport.sensor = lastReport.sensor;
-                    VRPNEventManager.TriggerEventTracker(data.deviceType, data.deviceName, newReport);
+                    newReport.num_channel = lastReport.num_channel;
+                    newReport.channel = lastReport.channel;
+                    VRPNEventManager.TriggerEventAnalog(data.deviceType, data.deviceName, newReport);
                     moreReports = false;
                 }
             }
