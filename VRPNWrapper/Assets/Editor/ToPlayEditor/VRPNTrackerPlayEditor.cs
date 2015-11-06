@@ -39,14 +39,14 @@ public class VRPNTrackerPlayEditor : Editor
         string errorText = "";
 
         //Validation
-        if (!Application.isPlaying)
-        {
-            errorText = "The editor must be running";
-            ready = false;
-        }
         if (vrpnTrackerPlay.path == null || vrpnTrackerPlay.path == "")
         {
             errorText = "A file must be chosen";
+            ready = false;
+        }
+        if (!Application.isPlaying)
+        {
+            errorText = "The editor must be running";
             ready = false;
         }
 

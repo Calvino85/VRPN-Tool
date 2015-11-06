@@ -38,7 +38,6 @@ public class VRPNTrackerPlay : MonoBehaviour
     private float firstTime;
     private List<VRPNTracker.TrackerReportNew>.Enumerator e;
     private VRPNTracker.TrackerReportNew actualReport;
-    private VRPNTracker.TrackerReportNew lastReport;
 
     //Public method that allows to start playing
     //It reads the data from the indicated path
@@ -60,11 +59,13 @@ public class VRPNTrackerPlay : MonoBehaviour
 
     void Update()
     {
-        if(isPlaying)
+        if (isPlaying)
         {
             float actualTime;
             float actualReportTime = 0f;
             bool moreReports = true;
+            bool alreadyAdvanced = false;
+            Dictionary<int, VRPNTracker.TrackerReportNew> lastReports = new Dictionary<int, VRPNTracker.TrackerReportNew>();
 
             if (firstReport)
             {
@@ -90,32 +91,56 @@ public class VRPNTrackerPlay : MonoBehaviour
                 actualReportTime = actualReport.msg_time.tv_sec + (actualReport.msg_time.tv_usec / 1000000f);
                 if (actualReportTime <= actualTime)
                 {
-                    lastReport = e.Current;
-                    if (e.MoveNext())
+                    VRPNTracker.TrackerReportNew test;
+                    if (lastReports.TryGetValue(actualReport.sensor, out test))
                     {
-                        actualReport = e.Current;
+                        lastReports[actualReport.sensor] = actualReport;
                     }
                     else
                     {
+                        lastReports.Add(actualReport.sensor, actualReport);
+                    }
+                    if (e.MoveNext())
+                    {
+                        actualReport = e.Current;
+                        alreadyAdvanced = true;
+                    }
+                    else
+                    {
+                        sendingReports(lastReports);
+
                         moreReports = false;
                         isPlaying = false;
                         firstReport = true;
                     }
                 }
+                else if (alreadyAdvanced)
+                {
+                    sendingReports(lastReports);
+
+                    moreReports = false;
+                }
                 else
                 {
-                    VRPNTracker.TrackerReport newReport = new VRPNTracker.TrackerReport();
-                    VRPNManager.TimeVal newMsgTime = new VRPNManager.TimeVal();
-                    newMsgTime.tv_sec = (UInt32)lastReport.msg_time.tv_sec;
-                    newMsgTime.tv_usec = (UInt32)lastReport.msg_time.tv_usec;
-                    newReport.msg_time = newMsgTime;
-                    newReport.pos = lastReport.pos;
-                    newReport.quat = lastReport.quat;
-                    newReport.sensor = lastReport.sensor;
-                    VRPNEventManager.TriggerEventTracker(data.deviceType, data.deviceName, newReport);
                     moreReports = false;
                 }
             }
+        }
+    }
+
+    private void sendingReports(Dictionary<int, VRPNTracker.TrackerReportNew> lastReports)
+    {
+        foreach (KeyValuePair<int, VRPNTracker.TrackerReportNew> pair in lastReports)
+        {
+            VRPNTracker.TrackerReport newReport = new VRPNTracker.TrackerReport();
+            VRPNManager.TimeVal newMsgTime = new VRPNManager.TimeVal();
+            newMsgTime.tv_sec = (UInt32)pair.Value.msg_time.tv_sec;
+            newMsgTime.tv_usec = (UInt32)pair.Value.msg_time.tv_usec;
+            newReport.msg_time = newMsgTime;
+            newReport.pos = pair.Value.pos;
+            newReport.quat = pair.Value.quat;
+            newReport.sensor = pair.Value.sensor;
+            VRPNEventManager.TriggerEventTracker(data.deviceType, data.deviceName, newReport);
         }
     }
 

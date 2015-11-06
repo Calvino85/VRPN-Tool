@@ -39,14 +39,14 @@ public class VRPNButtonPlayEditor : Editor
         string errorText = "";
 
         //Validation
-        if (!Application.isPlaying)
-        {
-            errorText = "The editor must be running";
-            ready = false;
-        }
         if (vrpnButtonPlay.path == null || vrpnButtonPlay.path == "")
         {
             errorText = "A file must be chosen";
+            ready = false;
+        }
+        if (!Application.isPlaying)
+        {
+            errorText = "The editor must be running";
             ready = false;
         }
 

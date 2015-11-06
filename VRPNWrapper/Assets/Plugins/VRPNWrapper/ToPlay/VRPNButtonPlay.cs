@@ -38,7 +38,6 @@ public class VRPNButtonPlay : MonoBehaviour
     private float firstTime;
     private List<VRPNButton.ButtonReportNew>.Enumerator e;
     private VRPNButton.ButtonReportNew actualReport;
-    private VRPNButton.ButtonReportNew lastReport;
 
     //Public method that allows to start playing
     //It reads the data from the indicated path
@@ -65,6 +64,8 @@ public class VRPNButtonPlay : MonoBehaviour
             float actualTime;
             float actualReportTime = 0f;
             bool moreReports = true;
+            bool alreadyAdvanced = false;
+            Dictionary<int, VRPNButton.ButtonReportNew> lastReports = new Dictionary<int, VRPNButton.ButtonReportNew>();
 
             if (firstReport)
             {
@@ -90,31 +91,55 @@ public class VRPNButtonPlay : MonoBehaviour
                 actualReportTime = actualReport.msg_time.tv_sec + (actualReport.msg_time.tv_usec / 1000000f);
                 if (actualReportTime <= actualTime)
                 {
-                    lastReport = e.Current;
-                    if (e.MoveNext())
+                    VRPNButton.ButtonReportNew test;
+                    if (lastReports.TryGetValue(actualReport.button, out test))
                     {
-                        actualReport = e.Current;
+                        lastReports[actualReport.button] = actualReport;
                     }
                     else
                     {
+                        lastReports.Add(actualReport.button, actualReport);
+                    }
+                    if (e.MoveNext())
+                    {
+                        actualReport = e.Current;
+                        alreadyAdvanced = true;
+                    }
+                    else
+                    {
+                        sendingReports(lastReports);
+
                         moreReports = false;
                         isPlaying = false;
                         firstReport = true;
                     }
                 }
+                else if (alreadyAdvanced)
+                {
+                    sendingReports(lastReports);
+
+                    moreReports = false;
+                }
                 else
                 {
-                    VRPNButton.ButtonReport newReport = new VRPNButton.ButtonReport();
-                    VRPNManager.TimeVal newMsgTime = new VRPNManager.TimeVal();
-                    newMsgTime.tv_sec = (UInt32)lastReport.msg_time.tv_sec;
-                    newMsgTime.tv_usec = (UInt32)lastReport.msg_time.tv_usec;
-                    newReport.msg_time = newMsgTime;
-                    newReport.button = lastReport.button;
-                    newReport.state = lastReport.state;
-                    VRPNEventManager.TriggerEventButton(data.deviceType, data.deviceName, newReport);
                     moreReports = false;
                 }
             }
+        }
+    }
+
+    private void sendingReports(Dictionary<int, VRPNButton.ButtonReportNew> lastReports)
+    {
+        foreach (KeyValuePair<int, VRPNButton.ButtonReportNew> pair in lastReports)
+        {
+            VRPNButton.ButtonReport newReport = new VRPNButton.ButtonReport();
+            VRPNManager.TimeVal newMsgTime = new VRPNManager.TimeVal();
+            newMsgTime.tv_sec = (UInt32)pair.Value.msg_time.tv_sec;
+            newMsgTime.tv_usec = (UInt32)pair.Value.msg_time.tv_usec;
+            newReport.msg_time = newMsgTime;
+            newReport.button = pair.Value.button;
+            newReport.state = pair.Value.state;
+            VRPNEventManager.TriggerEventButton(data.deviceType, data.deviceName, newReport);
         }
     }
 

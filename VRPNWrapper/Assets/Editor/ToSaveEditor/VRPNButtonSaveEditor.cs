@@ -46,14 +46,14 @@ public class VRPNButtonSaveEditor : Editor
         }
 
         //Validation
-        if (!Application.isPlaying)
-        {
-            errorText = "The editor must be running";
-            ready = false;
-        }
         if (vrpnButtonSave.path == null || vrpnButtonSave.path == "")
         {
             errorText = "A save path must be chosen";
+            ready = false;
+        }
+        if (!Application.isPlaying)
+        {
+            errorText = "The editor must be running";
             ready = false;
         }
         if (vrpnButtonSave.gameObject.GetComponent<VRPNButton>() == null)

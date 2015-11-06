@@ -46,14 +46,14 @@ public class VRPNTrackerSaveEditor : Editor
         }
 
         //Validation
-        if (!Application.isPlaying)
-        {
-            errorText = "The editor must be running";
-            ready = false;
-        }
         if (vrpnTrackerSave.path == null || vrpnTrackerSave.path == "")
         {
             errorText = "A save path must be chosen";
+            ready = false;
+        }
+        if (!Application.isPlaying)
+        {
+            errorText = "The editor must be running";
             ready = false;
         }
         if (vrpnTrackerSave.gameObject.GetComponent<VRPNTracker>() == null)

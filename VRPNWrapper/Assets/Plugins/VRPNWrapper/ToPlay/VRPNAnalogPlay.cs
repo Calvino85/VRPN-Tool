@@ -38,7 +38,6 @@ public class VRPNAnalogPlay : MonoBehaviour
     private float firstTime;
     private List<VRPNAnalog.AnalogReportNew>.Enumerator e;
     private VRPNAnalog.AnalogReportNew actualReport;
-    private VRPNAnalog.AnalogReportNew lastReport;
 
     //Public method that allows to start playing
     //It reads the data from the indicated path
@@ -65,6 +64,8 @@ public class VRPNAnalogPlay : MonoBehaviour
             float actualTime;
             float actualReportTime = 0f;
             bool moreReports = true;
+            bool alreadyAdvanced = false;
+            VRPNAnalog.AnalogReportNew lastReport = new VRPNAnalog.AnalogReportNew();
 
             if (firstReport)
             {
@@ -94,28 +95,41 @@ public class VRPNAnalogPlay : MonoBehaviour
                     if (e.MoveNext())
                     {
                         actualReport = e.Current;
+                        alreadyAdvanced = true;
                     }
                     else
                     {
+                        sendingReport(lastReport);
+
                         moreReports = false;
                         isPlaying = false;
                         firstReport = true;
                     }
                 }
+                else if (alreadyAdvanced)
+                {
+                    sendingReport(lastReport);
+
+                    moreReports = false;
+                }
                 else
                 {
-                    VRPNAnalog.AnalogReport newReport = new VRPNAnalog.AnalogReport();
-                    VRPNManager.TimeVal newMsgTime = new VRPNManager.TimeVal();
-                    newMsgTime.tv_sec = (UInt32)lastReport.msg_time.tv_sec;
-                    newMsgTime.tv_usec = (UInt32)lastReport.msg_time.tv_usec;
-                    newReport.msg_time = newMsgTime;
-                    newReport.num_channel = lastReport.num_channel;
-                    newReport.channel = lastReport.channel;
-                    VRPNEventManager.TriggerEventAnalog(data.deviceType, data.deviceName, newReport);
                     moreReports = false;
                 }
             }
         }
+    }
+
+    private void sendingReport(VRPNAnalog.AnalogReportNew lastReport)
+    {
+        VRPNAnalog.AnalogReport newReport = new VRPNAnalog.AnalogReport();
+        VRPNManager.TimeVal newMsgTime = new VRPNManager.TimeVal();
+        newMsgTime.tv_sec = (UInt32)lastReport.msg_time.tv_sec;
+        newMsgTime.tv_usec = (UInt32)lastReport.msg_time.tv_usec;
+        newReport.msg_time = newMsgTime;
+        newReport.num_channel = lastReport.num_channel;
+        newReport.channel = lastReport.channel;
+        VRPNEventManager.TriggerEventAnalog(data.deviceType, data.deviceName, newReport);
     }
 
     //Public method that allows to stop playing

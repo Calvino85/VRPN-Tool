@@ -39,14 +39,14 @@ public class VRPNAnalogPlayEditor : Editor
         string errorText = "";
 
         //Validation
-        if (!Application.isPlaying)
-        {
-            errorText = "The editor must be running";
-            ready = false;
-        }
         if (vrpnAnalogPlay.path == null || vrpnAnalogPlay.path == "")
         {
             errorText = "A file must be chosen";
+            ready = false;
+        }
+        if (!Application.isPlaying)
+        {
+            errorText = "The editor must be running";
             ready = false;
         }
 

@@ -136,7 +136,8 @@ public class VRPNTracker : MonoBehaviour {
     private Derivation_Type Derivation = Derivation_Type.None;
     private Transform DeviceToUnity;
     [HideInInspector]
-    public Transform SensorOffset;   
+    public Transform SensorOffset;
+    [HideInInspector]
     public int SensorNumber = 0;
     private int MaxReports = 20;
     [HideInInspector]
@@ -327,14 +328,12 @@ public class VRPNTracker : MonoBehaviour {
 		float[] repsSum = new float[7];
 		int repsCount = 0;
 		TrackerReport[] reps = new TrackerReport[num];
-		for (int i=0; i<num; i++)
-			{
+        Dictionary<int, VRPNTracker.TrackerReport> lastReports = new Dictionary<int, VRPNTracker.TrackerReport>();
+        for (int i=0; i<num; i++)
+		{
             reps[i] = (TrackerReport)Marshal.PtrToStructure(repsPtr[i],typeof(TrackerReport));
             if (reps[i].sensor == SensorNumber && VRPNManager.TimeValGreater(ref reps[i].msg_time,ref LastReport))
-			{
-                //Trigger tracker event in event manager
-                //It must be done here or it will repeat a lot of reports
-                VRPNEventManager.TriggerEventTracker(TrackerType.ToString(), TrackerName.ToString(), reps[i]);
+            {
                 repsSum[0] += (float)reps[i].pos[0];
 				repsSum[1] += (float)reps[i].pos[1];
 				repsSum[2] += (float)reps[i].pos[2];
@@ -346,7 +345,21 @@ public class VRPNTracker : MonoBehaviour {
 				LastReport.tv_usec = reps[i].msg_time.tv_usec;
 				repsCount++;
 			}
-		}
+            VRPNTracker.TrackerReport test;
+            if (lastReports.TryGetValue(reps[i].sensor, out test))
+            {
+                lastReports[reps[i].sensor] = reps[i];
+            }
+            else
+            {
+                lastReports.Add(reps[i].sensor, reps[i]);
+            }
+        }
+        foreach (KeyValuePair<int, VRPNTracker.TrackerReport> pair in lastReports)
+        {
+            //Trigger tracker event in event manager
+            VRPNEventManager.TriggerEventTracker(TrackerType.ToString(), TrackerName.ToString(), pair.Value);
+        }
         if (repsCount > 0)
 		{
 		    trackerPos.x = repsSum[0]/(float)repsCount;

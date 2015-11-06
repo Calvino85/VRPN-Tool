@@ -46,14 +46,14 @@ public class VRPNAnalogSaveEditor : Editor
         }
 
         //Validation
-        if (!Application.isPlaying)
-        {
-            errorText = "The editor must be running";
-            ready = false;
-        }
         if (vrpnAnalogSave.path == null || vrpnAnalogSave.path == "")
         {
             errorText = "A save path must be chosen";
+            ready = false;
+        }
+        if (!Application.isPlaying)
+        {
+            errorText = "The editor must be running";
             ready = false;
         }
         if (vrpnAnalogSave.gameObject.GetComponent<VRPNAnalog>() == null)

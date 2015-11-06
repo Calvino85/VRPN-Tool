@@ -205,8 +205,12 @@ public class VRPNAnalog : MonoBehaviour {
             for (i = 0; i < num; i++)
             {
                 reports[i] = (AnalogReport)Marshal.PtrToStructure(reportsPtr[i], typeof(AnalogReport));
-                //Trigger analog sensor event in event manager
-                VRPNEventManager.TriggerEventAnalog(AnalogType.ToString(), AnalogName.ToString(), reports[i]);
+                if (i == num - 1)
+                {
+                    //Trigger analog sensor event in event manager
+                    //Only the last one is send, one for frame
+                    VRPNEventManager.TriggerEventAnalog(AnalogType.ToString(), AnalogName.ToString(), reports[i]);
+                }
                 messageString = "<";
                 for (int j = 0; j < reports[i].num_channel; j++)
                 {
