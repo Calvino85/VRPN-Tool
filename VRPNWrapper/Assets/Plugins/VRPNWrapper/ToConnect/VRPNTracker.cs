@@ -134,7 +134,9 @@ public class VRPNTracker : MonoBehaviour {
     [HideInInspector]
     public Transform_Type ApplyTracking = Transform_Type.None;
     private Derivation_Type Derivation = Derivation_Type.None;
+    #pragma warning disable 0649
     private Transform DeviceToUnity;
+    #pragma warning restore 0649
     [HideInInspector]
     public Transform SensorOffset;
     [HideInInspector]

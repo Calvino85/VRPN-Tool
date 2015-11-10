@@ -88,8 +88,10 @@ public class VRPNTrackerCalibrate : MonoBehaviour {
 	public static int global_count = 0;
     private Vector3 sensorPosition;
     private Quaternion sensorRotation;
+    #pragma warning disable 0414
     private Vector3 trackerPosition;
     private Quaternion trackerRotation;
+    #pragma warning restore 0414
     public static float fieldOfView;
     private Transform plane;
 	private int gain = 1;

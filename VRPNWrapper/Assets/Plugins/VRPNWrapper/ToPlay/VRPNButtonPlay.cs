@@ -57,6 +57,7 @@ public class VRPNButtonPlay : MonoBehaviour
         }
     }
 
+    // Update is called once per frame
     void Update()
     {
         if (isPlaying)
@@ -128,6 +129,7 @@ public class VRPNButtonPlay : MonoBehaviour
         }
     }
 
+    //Auxiliar method that sends last frame report for each button
     private void sendingReports(Dictionary<int, VRPNButton.ButtonReportNew> lastReports)
     {
         foreach (KeyValuePair<int, VRPNButton.ButtonReportNew> pair in lastReports)

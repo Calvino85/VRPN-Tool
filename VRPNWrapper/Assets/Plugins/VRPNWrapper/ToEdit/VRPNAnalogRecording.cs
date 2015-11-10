@@ -2,16 +2,16 @@
  * PROJECT: VRPN Tool
  * ========================================================================
  * 
- * Based on http://unity3d.com/es/learn/tutorials/modules/beginner/live-training-archive/persistence-data-saving-loading
+ * Analog Recording class to support VRPNEdit recordings playing
  *
  * ========================================================================
  ** @author   Andrés Roberto Gómez (and-gome@uniandes.edu.co)
  *
  * ========================================================================
  *
- * VRPNAnalogPlay.cs
+ * VRPNAnalogRecording.cs
  *
- * usage: Must be added once for each analog sensor that is desired to play.
+ * usage: 
  * 
  * inputs:
  *
@@ -23,14 +23,14 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
 
-public class VRPNAnalogPlay : MonoBehaviour
+public class VRPNAnalogRecording
 {
     //Public properties
-    public string path;
+    public float reportTime;
+    public int channels;
     public bool isPlaying = false;
+    public float lastTime;
 
     //Private properties
     private VRPNAnalog.AnalogReports data;
@@ -39,26 +39,31 @@ public class VRPNAnalogPlay : MonoBehaviour
     private List<VRPNAnalog.AnalogReportNew>.Enumerator e;
     private VRPNAnalog.AnalogReportNew actualReport;
 
-    //Public method that allows to start playing
-    //It reads the data from the indicated path
-    public void StartPlaying()
+    //VRPNAnalogRecording Constructor
+    public VRPNAnalogRecording(float nTime, VRPNAnalog.AnalogReports nData)
     {
-        if (File.Exists(path))
+        reportTime = nTime;
+        data = nData;
+        e = data.list.GetEnumerator();
+
+        while (e.MoveNext())
         {
-            BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(path, FileMode.Open);
-            data = (VRPNAnalog.AnalogReports)bf.Deserialize(file);
-
-            file.Close();
-
-            isPlaying = true;
-
-            e = data.list.GetEnumerator();
+            VRPNAnalog.AnalogReportNew report = e.Current;
+            channels = report.num_channel;
+            lastTime = report.msg_time.tv_sec + (report.msg_time.tv_usec / 1000000f);
         }
+
+        e = data.list.GetEnumerator();
     }
 
-    // Update is called once per frame
-    void Update()
+    //Public method that allows to start playing
+    public void StartPlaying()
+    {
+        isPlaying = true;
+    }
+
+    //Public method that allows to update the playing state
+    public void Update()
     {
         if (isPlaying)
         {
@@ -89,7 +94,7 @@ public class VRPNAnalogPlay : MonoBehaviour
             //It seeks the last appropiate report for the actual time
             while (moreReports)
             {
-                actualReportTime = actualReport.msg_time.tv_sec + (actualReport.msg_time.tv_usec / 1000000f);
+                actualReportTime = actualReport.msg_time.tv_sec + (actualReport.msg_time.tv_usec / 1000000f) + reportTime;
                 if (actualReportTime <= actualTime)
                 {
                     lastReport = e.Current;
@@ -141,4 +146,10 @@ public class VRPNAnalogPlay : MonoBehaviour
         firstReport = true;
         e = data.list.GetEnumerator();
     }
+}
+
+//Auxiliar class to store a list of recordings
+public class VRPNAnalogRecordings
+{
+    public List<VRPNAnalogRecording> recordings = new List<VRPNAnalogRecording>();
 }

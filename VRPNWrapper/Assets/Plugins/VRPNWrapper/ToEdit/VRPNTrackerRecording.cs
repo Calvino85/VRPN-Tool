@@ -2,16 +2,16 @@
  * PROJECT: VRPN Tool
  * ========================================================================
  * 
- * Based on http://unity3d.com/es/learn/tutorials/modules/beginner/live-training-archive/persistence-data-saving-loading
+ * Tracker Recording class to support VRPNEdit recordings playing
  *
  * ========================================================================
  ** @author   Andrés Roberto Gómez (and-gome@uniandes.edu.co)
  *
  * ========================================================================
  *
- * VRPNTrackerPlay.cs
+ * VRPNTrackerRecording.cs
  *
- * usage: Must be added once for each tracker that is desired to play.
+ * usage: 
  * 
  * inputs:
  *
@@ -23,14 +23,15 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
 
-public class VRPNTrackerPlay : MonoBehaviour
+public class VRPNTrackerRecording
 {
     //Public properties
-    public string path;
+    public float reportTime;
+    public Dictionary<int, int> sensors = new Dictionary<int, int>();
+    public Dictionary<int, int> sensorsDisabled = new Dictionary<int, int>();
     public bool isPlaying = false;
+    public float lastTime;
 
     //Private properties
     private VRPNTracker.TrackerReports data;
@@ -39,26 +40,36 @@ public class VRPNTrackerPlay : MonoBehaviour
     private List<VRPNTracker.TrackerReportNew>.Enumerator e;
     private VRPNTracker.TrackerReportNew actualReport;
 
-    //Public method that allows to start playing
-    //It reads the data from the indicated path
-    public void StartPlaying()
+    //VRPNTrackerRecording Constructor
+    public VRPNTrackerRecording(float nTime, VRPNTracker.TrackerReports nData)
     {
-        if (File.Exists(path))
+        reportTime = nTime;
+        data = nData;
+
+        e = data.list.GetEnumerator();
+
+        while (e.MoveNext())
         {
-            BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(path, FileMode.Open);
-            data = (VRPNTracker.TrackerReports)bf.Deserialize(file);
-
-            file.Close();
-
-            isPlaying = true;
-
-            e = data.list.GetEnumerator();
+            VRPNTracker.TrackerReportNew report = e.Current;
+            int test;
+            if (!sensors.TryGetValue(report.sensor, out test))
+            {
+                sensors.Add(report.sensor, report.sensor);
+            }
+            lastTime = report.msg_time.tv_sec + (report.msg_time.tv_usec / 1000000f);
         }
+
+        e = data.list.GetEnumerator();
     }
 
-    // Update is called once per frame
-    void Update()
+    //Public method that allows to start playing
+    public void StartPlaying()
+    {
+        isPlaying = true;
+    }
+
+    //Public method that allows to update the playing state
+    public void Update()
     {
         if (isPlaying)
         {
@@ -89,7 +100,7 @@ public class VRPNTrackerPlay : MonoBehaviour
             //It seeks the last appropiate report for the actual time
             while (moreReports)
             {
-                actualReportTime = actualReport.msg_time.tv_sec + (actualReport.msg_time.tv_usec / 1000000f);
+                actualReportTime = actualReport.msg_time.tv_sec + (actualReport.msg_time.tv_usec / 1000000f) + reportTime;
                 if (actualReportTime <= actualTime)
                 {
                     VRPNTracker.TrackerReportNew test;
@@ -134,15 +145,19 @@ public class VRPNTrackerPlay : MonoBehaviour
     {
         foreach (KeyValuePair<int, VRPNTracker.TrackerReportNew> pair in lastReports)
         {
-            VRPNTracker.TrackerReport newReport = new VRPNTracker.TrackerReport();
-            VRPNManager.TimeVal newMsgTime = new VRPNManager.TimeVal();
-            newMsgTime.tv_sec = (UInt32)pair.Value.msg_time.tv_sec;
-            newMsgTime.tv_usec = (UInt32)pair.Value.msg_time.tv_usec;
-            newReport.msg_time = newMsgTime;
-            newReport.pos = pair.Value.pos;
-            newReport.quat = pair.Value.quat;
-            newReport.sensor = pair.Value.sensor;
-            VRPNEventManager.TriggerEventTracker(data.deviceType, data.deviceName, newReport);
+            int test;
+            if (!sensorsDisabled.TryGetValue(pair.Key, out test))
+            {
+                VRPNTracker.TrackerReport newReport = new VRPNTracker.TrackerReport();
+                VRPNManager.TimeVal newMsgTime = new VRPNManager.TimeVal();
+                newMsgTime.tv_sec = (UInt32)pair.Value.msg_time.tv_sec;
+                newMsgTime.tv_usec = (UInt32)pair.Value.msg_time.tv_usec;
+                newReport.msg_time = newMsgTime;
+                newReport.pos = pair.Value.pos;
+                newReport.quat = pair.Value.quat;
+                newReport.sensor = pair.Value.sensor;
+                VRPNEventManager.TriggerEventTracker(data.deviceType, data.deviceName, newReport);
+            }
         }
     }
 
@@ -153,4 +168,10 @@ public class VRPNTrackerPlay : MonoBehaviour
         firstReport = true;
         e = data.list.GetEnumerator();
     }
+}
+
+//Auxiliar class to store a list of recordings
+public class VRPNTrackerRecordings
+{
+    public List<VRPNTrackerRecording> recordings = new List<VRPNTrackerRecording>();
 }

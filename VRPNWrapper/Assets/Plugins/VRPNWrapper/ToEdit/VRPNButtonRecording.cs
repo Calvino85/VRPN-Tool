@@ -2,16 +2,16 @@
  * PROJECT: VRPN Tool
  * ========================================================================
  * 
- * Based on http://unity3d.com/es/learn/tutorials/modules/beginner/live-training-archive/persistence-data-saving-loading
+ * Button Recording class to support VRPNEdit recordings playing
  *
  * ========================================================================
  ** @author   Andrés Roberto Gómez (and-gome@uniandes.edu.co)
  *
  * ========================================================================
  *
- * VRPNTrackerPlay.cs
+ * VRPNButtonRecording.cs
  *
- * usage: Must be added once for each tracker that is desired to play.
+ * usage: 
  * 
  * inputs:
  *
@@ -23,42 +23,52 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
 
-public class VRPNTrackerPlay : MonoBehaviour
+public class VRPNButtonRecording
 {
     //Public properties
-    public string path;
+    public float reportTime;
+    public Dictionary<int, int> buttons = new Dictionary<int, int>();
     public bool isPlaying = false;
+    public float lastTime;
 
     //Private properties
-    private VRPNTracker.TrackerReports data;
+    private VRPNButton.ButtonReports data;
     private bool firstReport = true;
     private float firstTime;
-    private List<VRPNTracker.TrackerReportNew>.Enumerator e;
-    private VRPNTracker.TrackerReportNew actualReport;
+    private List<VRPNButton.ButtonReportNew>.Enumerator e;
+    private VRPNButton.ButtonReportNew actualReport;
 
-    //Public method that allows to start playing
-    //It reads the data from the indicated path
-    public void StartPlaying()
+    //VRPNButtonRecording Constructor
+    public VRPNButtonRecording(float nTime, VRPNButton.ButtonReports nData)
     {
-        if (File.Exists(path))
+        reportTime = nTime;
+        data = nData;
+
+        e = data.list.GetEnumerator();
+
+        while (e.MoveNext())
         {
-            BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(path, FileMode.Open);
-            data = (VRPNTracker.TrackerReports)bf.Deserialize(file);
-
-            file.Close();
-
-            isPlaying = true;
-
-            e = data.list.GetEnumerator();
+            VRPNButton.ButtonReportNew report = e.Current;
+            int test;
+            if (!buttons.TryGetValue(report.button, out test))
+            {
+                buttons.Add(report.button, report.button);
+            }
+            lastTime = report.msg_time.tv_sec + (report.msg_time.tv_usec / 1000000f);
         }
+
+        e = data.list.GetEnumerator();
     }
 
-    // Update is called once per frame
-    void Update()
+    //Public method that allows to start playing
+    public void StartPlaying()
+    {
+        isPlaying = true;
+    }
+
+    //Public method that allows to update the playing state
+    public void Update()
     {
         if (isPlaying)
         {
@@ -66,7 +76,7 @@ public class VRPNTrackerPlay : MonoBehaviour
             float actualReportTime = 0f;
             bool moreReports = true;
             bool alreadyAdvanced = false;
-            Dictionary<int, VRPNTracker.TrackerReportNew> lastReports = new Dictionary<int, VRPNTracker.TrackerReportNew>();
+            Dictionary<int, VRPNButton.ButtonReportNew> lastReports = new Dictionary<int, VRPNButton.ButtonReportNew>();
 
             if (firstReport)
             {
@@ -89,17 +99,17 @@ public class VRPNTrackerPlay : MonoBehaviour
             //It seeks the last appropiate report for the actual time
             while (moreReports)
             {
-                actualReportTime = actualReport.msg_time.tv_sec + (actualReport.msg_time.tv_usec / 1000000f);
+                actualReportTime = actualReport.msg_time.tv_sec + (actualReport.msg_time.tv_usec / 1000000f) + reportTime;
                 if (actualReportTime <= actualTime)
                 {
-                    VRPNTracker.TrackerReportNew test;
-                    if (lastReports.TryGetValue(actualReport.sensor, out test))
+                    VRPNButton.ButtonReportNew test;
+                    if (lastReports.TryGetValue(actualReport.button, out test))
                     {
-                        lastReports[actualReport.sensor] = actualReport;
+                        lastReports[actualReport.button] = actualReport;
                     }
                     else
                     {
-                        lastReports.Add(actualReport.sensor, actualReport);
+                        lastReports.Add(actualReport.button, actualReport);
                     }
                     if (e.MoveNext())
                     {
@@ -129,20 +139,19 @@ public class VRPNTrackerPlay : MonoBehaviour
         }
     }
 
-    //Auxiliar method that sends last frame report for each sensor
-    private void sendingReports(Dictionary<int, VRPNTracker.TrackerReportNew> lastReports)
+    //Auxiliar method that sends last frame report for each button
+    private void sendingReports(Dictionary<int, VRPNButton.ButtonReportNew> lastReports)
     {
-        foreach (KeyValuePair<int, VRPNTracker.TrackerReportNew> pair in lastReports)
+        foreach (KeyValuePair<int, VRPNButton.ButtonReportNew> pair in lastReports)
         {
-            VRPNTracker.TrackerReport newReport = new VRPNTracker.TrackerReport();
+            VRPNButton.ButtonReport newReport = new VRPNButton.ButtonReport();
             VRPNManager.TimeVal newMsgTime = new VRPNManager.TimeVal();
             newMsgTime.tv_sec = (UInt32)pair.Value.msg_time.tv_sec;
             newMsgTime.tv_usec = (UInt32)pair.Value.msg_time.tv_usec;
             newReport.msg_time = newMsgTime;
-            newReport.pos = pair.Value.pos;
-            newReport.quat = pair.Value.quat;
-            newReport.sensor = pair.Value.sensor;
-            VRPNEventManager.TriggerEventTracker(data.deviceType, data.deviceName, newReport);
+            newReport.button = pair.Value.button;
+            newReport.state = pair.Value.state;
+            VRPNEventManager.TriggerEventButton(data.deviceType, data.deviceName, newReport);
         }
     }
 
@@ -153,4 +162,10 @@ public class VRPNTrackerPlay : MonoBehaviour
         firstReport = true;
         e = data.list.GetEnumerator();
     }
+}
+
+//Auxiliar class to store a list of recordings
+public class VRPNButtonRecordings
+{
+    public List<VRPNButtonRecording> recordings = new List<VRPNButtonRecording>();
 }

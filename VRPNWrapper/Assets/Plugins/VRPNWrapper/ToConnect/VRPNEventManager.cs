@@ -92,7 +92,9 @@ public class VRPNEventManager : MonoBehaviour
     void Awake()
     {
         //init VRPNEventManager
+        #pragma warning disable 0219
         VRPNEventManager getInstance = VRPNEventManager.instance;
+        #pragma warning restore 0219
     }
 
     //To add a listener for Buttons
