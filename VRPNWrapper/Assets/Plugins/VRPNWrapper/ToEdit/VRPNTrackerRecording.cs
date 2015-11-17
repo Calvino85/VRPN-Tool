@@ -20,13 +20,14 @@
  * ========================================================================*/
 
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 
+[Serializable]
 public class VRPNTrackerRecording
 {
     //Public properties
+    public string name;
     public float reportTime;
     public Dictionary<int, int> sensors = new Dictionary<int, int>();
     public Dictionary<int, int> sensorsDisabled = new Dictionary<int, int>();
@@ -41,8 +42,9 @@ public class VRPNTrackerRecording
     private VRPNTracker.TrackerReportNew actualReport;
 
     //VRPNTrackerRecording Constructor
-    public VRPNTrackerRecording(float nTime, VRPNTracker.TrackerReports nData)
+    public VRPNTrackerRecording(string nName, float nTime, VRPNTracker.TrackerReports nData)
     {
+        name = nName;
         reportTime = nTime;
         data = nData;
 
@@ -171,6 +173,7 @@ public class VRPNTrackerRecording
 }
 
 //Auxiliar class to store a list of recordings
+[Serializable]
 public class VRPNTrackerRecordings
 {
     public List<VRPNTrackerRecording> recordings = new List<VRPNTrackerRecording>();

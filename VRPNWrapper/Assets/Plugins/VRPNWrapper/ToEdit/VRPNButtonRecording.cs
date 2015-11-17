@@ -20,13 +20,14 @@
  * ========================================================================*/
 
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 
+[Serializable]
 public class VRPNButtonRecording
 {
     //Public properties
+    public string name;
     public float reportTime;
     public Dictionary<int, int> buttons = new Dictionary<int, int>();
     public bool isPlaying = false;
@@ -40,8 +41,9 @@ public class VRPNButtonRecording
     private VRPNButton.ButtonReportNew actualReport;
 
     //VRPNButtonRecording Constructor
-    public VRPNButtonRecording(float nTime, VRPNButton.ButtonReports nData)
+    public VRPNButtonRecording(string nName, float nTime, VRPNButton.ButtonReports nData)
     {
+        name = nName;
         reportTime = nTime;
         data = nData;
 
@@ -165,6 +167,7 @@ public class VRPNButtonRecording
 }
 
 //Auxiliar class to store a list of recordings
+[Serializable]
 public class VRPNButtonRecordings
 {
     public List<VRPNButtonRecording> recordings = new List<VRPNButtonRecording>();

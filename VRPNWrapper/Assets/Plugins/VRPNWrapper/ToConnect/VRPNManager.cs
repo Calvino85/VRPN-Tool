@@ -86,7 +86,13 @@ using System.Runtime.InteropServices;
 using System.IO;
 
 public class VRPNManager : MonoBehaviour 
-{   
+{
+    public enum DeviceType
+    {
+        Tracker,
+        Analog,
+        Button
+    }
 
 	[ StructLayout( LayoutKind.Sequential )]
     [Serializable]

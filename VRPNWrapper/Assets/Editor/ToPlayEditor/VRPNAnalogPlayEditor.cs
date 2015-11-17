@@ -16,7 +16,7 @@
  *
  * VRPNAnalogPlayEditor.cs
  *
- * usage: Must be added in the Editor folder
+ * usage: Must be located in the Editor folder
  * 
  * inputs:
  *
@@ -25,7 +25,6 @@
  * ========================================================================*/
 
 using UnityEngine;
-using System.Collections;
 using UnityEditor;
 
 [CustomEditor(typeof(VRPNAnalogPlay))]

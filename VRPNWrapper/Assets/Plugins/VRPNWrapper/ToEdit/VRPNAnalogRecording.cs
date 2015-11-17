@@ -20,13 +20,14 @@
  * ========================================================================*/
 
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 
+[Serializable]
 public class VRPNAnalogRecording
 {
     //Public properties
+    public string name;
     public float reportTime;
     public int channels;
     public bool isPlaying = false;
@@ -40,8 +41,9 @@ public class VRPNAnalogRecording
     private VRPNAnalog.AnalogReportNew actualReport;
 
     //VRPNAnalogRecording Constructor
-    public VRPNAnalogRecording(float nTime, VRPNAnalog.AnalogReports nData)
+    public VRPNAnalogRecording(string nName, float nTime, VRPNAnalog.AnalogReports nData)
     {
+        name = nName;
         reportTime = nTime;
         data = nData;
         e = data.list.GetEnumerator();
@@ -149,6 +151,7 @@ public class VRPNAnalogRecording
 }
 
 //Auxiliar class to store a list of recordings
+[Serializable]
 public class VRPNAnalogRecordings
 {
     public List<VRPNAnalogRecording> recordings = new List<VRPNAnalogRecording>();

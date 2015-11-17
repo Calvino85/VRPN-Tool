@@ -22,7 +22,6 @@
 
 using UnityEngine;
 using UnityEngine.Events;
-using System.Collections;
 using System.Collections.Generic;
 
 //Unity Event for Button Report
@@ -205,7 +204,7 @@ public class VRPNEventManager : MonoBehaviour
         }
     }
 
-    //To add a trigger for Buttons (Only for the VRPNButton class)
+    //To add a trigger for Buttons
     public static void TriggerEventButton(string deviceType, string deviceName, VRPNButton.ButtonReport report)
     {
         if (eventManager == null)
@@ -220,7 +219,7 @@ public class VRPNEventManager : MonoBehaviour
         }
     }
 
-    //To add a trigger for Analog sensors (Only for the VRPNAnalog class)
+    //To add a trigger for Analog sensors
     public static void TriggerEventAnalog(string deviceType, string deviceName, VRPNAnalog.AnalogReport report)
     {
         if (eventManager == null)
@@ -235,7 +234,7 @@ public class VRPNEventManager : MonoBehaviour
         }
     }
 
-    //To add a trigger for Trackers (Only for the VRPNTracker class)
+    //To add a trigger for Trackers
     public static void TriggerEventTracker(string deviceType, string deviceName, VRPNTracker.TrackerReport report)
     {
         if (eventManager == null)
